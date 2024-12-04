@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import {getModel, getDeviceId} from 'react-native-device-info';
 
+// Function to get the diagonal in mm from the backend
 const getDiagonalLength = async () => {
   if (Platform.OS === 'android') {
     const {SizeHelper} = NativeModules;
@@ -18,10 +19,13 @@ const getDiagonalLength = async () => {
   return 0;
 };
 
+// Calculates the PPMM
 const calculateppmm = (width, height, length) => {
   return Math.sqrt(width ** 2 + height ** 2) / length;
 };
 
+
+// Main component that stores all the data
 export function TEST() {
   const width = Dimensions.get('screen').width;
   const height = Dimensions.get('screen').height;
@@ -73,6 +77,7 @@ export function TEST() {
     fetchDiagonalLength();
   }, []);
 
+  // Recalculates the device offset for some the previous useEffect does not do the calculations before it setDeviceData
   useEffect(() => {
     if (deviceData.pixelfor1mm && deviceData.dimensions.height) {
       const updatedDeviceOffset =
@@ -83,7 +88,8 @@ export function TEST() {
       }));
     }
   }, [deviceData.pixelfor1mm, deviceData.dimensions.height]);
-
+  
+  // Calculates the pixel distance so the circles should line up correctly inside the vr headset
   const calculatePixelDistanceBetweenCircles = () => {
     const marginInPixels =
       ((62 * deviceData.pixelfor1mm) / PixelRatio.get()) + (deviceData.deviceOffset > 0 ? -deviceData.deviceOffset * deviceData.pixelfor1mm : deviceData.deviceOffset * deviceData.pixelfor1mm) / PixelRatio.get() - 50;
