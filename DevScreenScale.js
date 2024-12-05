@@ -24,7 +24,6 @@ const calculateppmm = (width, height, length) => {
   return Math.sqrt(width ** 2 + height ** 2) / length;
 };
 
-
 // Main component that stores all the data
 export function TEST() {
   const width = Dimensions.get('screen').width;
@@ -88,23 +87,28 @@ export function TEST() {
       }));
     }
   }, [deviceData.pixelfor1mm, deviceData.dimensions.height]);
-  
+
+  // Calculates the pixel size of the diameter of the circles
+  const calculatePixelSizeForEyeCircles = () => {
+    const circlePixelSize = (30 * deviceData.pixelfor1mm) / pixelDensity;
+    return circlePixelSize;
+  };
+  const circlePixelSize = calculatePixelSizeForEyeCircles();
+
   // Calculates the pixel distance so the circles should line up correctly inside the vr headset
   const calculatePixelDistanceBetweenCircles = () => {
-    const marginInPixels =
-      ((62 * deviceData.pixelfor1mm) / PixelRatio.get()) + (deviceData.deviceOffset > 0 ? -deviceData.deviceOffset * deviceData.pixelfor1mm : deviceData.deviceOffset * deviceData.pixelfor1mm) / PixelRatio.get() - 50;
+    const marginInPixels = (62 * deviceData.pixelfor1mm) / pixelDensity - circlePixelSize;
+    // ((62 * deviceData.pixelfor1mm) / PixelRatio.get()) + (deviceData.deviceOffset > 0 ? -deviceData.deviceOffset * deviceData.pixelfor1mm : deviceData.deviceOffset * deviceData.pixelfor1mm) / PixelRatio.get() - 50;
     return marginInPixels;
   };
-
   const pixelDistanceBetweenCircles = calculatePixelDistanceBetweenCircles();
 
   const styles = StyleSheet.create({
     circle: {
-      width: 100,
-      height: 100,
-      borderRadius: 50,
+      width: circlePixelSize,
+      height: circlePixelSize,
+      borderRadius: 99999,
       borderWidth: 2,
-      borderRadius: 50,
       borderColor: 'black',
       justifyContent: 'center',
       alignItems: 'center',
@@ -117,6 +121,7 @@ export function TEST() {
       backgroundColor: 'black',
     },
     circleContainer: {
+      marginTop: 70,
       flexDirection: 'row',
       justifyContent: 'center',
     },
@@ -125,10 +130,18 @@ export function TEST() {
   return (
     <View>
       <View style={styles.circleContainer}>
-        <View style={[styles.circle, {marginRight: pixelDistanceBetweenCircles / 2}]}>
+        <View
+          style={[
+            styles.circle,
+            {marginRight: pixelDistanceBetweenCircles / 2},
+          ]}>
           <View style={styles.innerCircle}></View>
         </View>
-        <View style={[styles.circle, {marginLeft: pixelDistanceBetweenCircles / 2}]}>
+        <View
+          style={[
+            styles.circle,
+            {marginLeft: pixelDistanceBetweenCircles / 2},
+          ]}>
           <View style={styles.innerCircle}></View>
         </View>
       </View>
